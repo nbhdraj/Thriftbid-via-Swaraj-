@@ -11,7 +11,74 @@ A thrift auction site where anyone can bid on vintage, streetwear, and luxury pi
 | `signup.html` | Create an account |
 | `dashboard-1.html` | User dashboard — your bids and cart |
 | `supabase-schema.sql` | Database tables, seed data, and realtime setup |
+| `index.html` | Root page — redirects to the storefront |
 | `serve.command` | Start a local web server (macOS) |
+| `render.yaml` | Render static site deploy config |
+
+## Deploy on Render
+
+This app is a **static site** (HTML + Clerk + Supabase). No backend server is needed on Render.
+
+### 1. Push the repo to GitHub
+
+Make sure the latest code is on GitHub (your friend’s `nbhdraj/Thriftbid-via-Swaraj-` repo).
+
+### 2. Create the Render static site
+
+1. Go to [render.com](https://render.com) and sign in.
+2. Click **New +** → **Static Site**.
+3. Connect the GitHub repo `Thriftbid-via-Swaraj-`.
+4. Use these settings:
+
+| Setting | Value |
+|---------|-------|
+| **Name** | `thriftbid` (or anything you like) |
+| **Branch** | `main` |
+| **Root Directory** | *(leave blank)* |
+| **Build Command** | `echo "no build"` |
+| **Publish Directory** | `.` |
+
+5. Click **Create Static Site**.
+
+Render will give you a URL like `https://thriftbid.onrender.com`.
+
+Or use the included blueprint: **New +** → **Blueprint** → point at the repo (Render reads `render.yaml` automatically).
+
+### 3. Configure Clerk (required for login & signup)
+
+Clerk must allow your Render domain, or sign-in will fail.
+
+1. Open [dashboard.clerk.com](https://dashboard.clerk.com).
+2. Select your app (the one with your publishable key).
+3. Go to **Configure → Domains** (or **Paths**).
+4. Add your Render URL, for example:
+   - `https://thriftbid.onrender.com`
+5. Under **Redirect URLs** / allowed origins, add:
+   - `https://thriftbid.onrender.com/login-1.html`
+   - `https://thriftbid.onrender.com/signup.html`
+   - `https://thriftbid.onrender.com/dashboard-1.html`
+   - `https://thriftbid.onrender.com/index-4.html`
+
+Replace `thriftbid.onrender.com` with your actual Render URL.
+
+### 4. Supabase (already cloud-hosted)
+
+If you use the same Supabase project and keys already in the HTML files, **no extra Render setup is needed**. Bids, cart, and realtime updates work from the live site.
+
+If you use a new Supabase project, run `supabase-schema.sql` once in the Supabase SQL Editor and update the keys in `index-4.html` and `dashboard-1.html`.
+
+### 5. Test the live site
+
+Open these URLs (replace with your Render domain):
+
+| Page | URL |
+|------|-----|
+| Home | `https://YOUR-APP.onrender.com/` |
+| Login | `https://YOUR-APP.onrender.com/login-1.html` |
+| Sign up | `https://YOUR-APP.onrender.com/signup.html` |
+| Dashboard | `https://YOUR-APP.onrender.com/dashboard-1.html` |
+
+Shorter redirects also work: `/login`, `/signup`, `/dashboard`.
 
 ## Run locally
 

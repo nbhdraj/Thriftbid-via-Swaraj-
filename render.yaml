@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: thriftbid
+    runtime: static
+    buildCommand: echo "Static site — no build step"
+    staticPublishPath: .
+    routes:
+      - type: redirect
+        source: /login
+        destination: /login-1.html
+      - type: redirect
+        source: /signup
+        destination: /signup.html
+      - type: redirect
+        source: /dashboard
+        destination: /dashboard-1.html
