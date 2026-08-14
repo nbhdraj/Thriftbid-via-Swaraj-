@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — THRIFTBID</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&family=Work+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#15140F;
+    --ink-2:#1E1D16;
+    --paper:#F2EFE4;
+    --paper-dim:#E7E3D4;
+    --text-lt:#F5F3EA;
+    --muted:#A8A597;
+    --muted-dk:#6b6a60;
+    --red:#E8402C;
+    --red-dk:#C22F1E;
+    --green:#3E9142;
+    --line: rgba(245,243,234,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--ink);
+    color:var(--text-lt);
+    font-family:'Work Sans',sans-serif;
+    font-size:16px;
+    line-height:1.5;
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    padding:32px 20px;
+  }
+  a{color:inherit;text-decoration:none;}
+  .display{font-family:'Anton',sans-serif;font-weight:400;letter-spacing:0.5px;text-transform:uppercase;}
+  .mono{font-family:'Space Mono',monospace;}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;}
+
+  .back-link{
+    position:absolute;top:28px;left:32px;font-size:13px;font-weight:600;color:var(--muted);
+    display:flex;align-items:center;gap:6px;transition:color .2s;
+  }
+  .back-link:hover{color:var(--text-lt);}
+
+  .login-logo{
+    position:absolute;top:26px;left:50%;transform:translateX(-50%);
+    font-family:'Anton',sans-serif;font-size:20px;letter-spacing:0.5px;
+  }
+  .login-logo span{color:var(--red);}
+  @media(min-width:640px){.login-logo{left:32px;transform:none;}}
+
+  .login-card{
+    width:100%;max-width:400px;background:var(--paper);color:var(--ink);
+    border-radius:14px;padding:40px 32px 34px;position:relative;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.55);
+  }
+  .login-eyebrow{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;
+    color:var(--red);margin-bottom:10px;display:flex;align-items:center;gap:8px;
+  }
+  .login-eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--red);display:inline-block;}
+  .login-title{font-size:30px;margin-bottom:8px;}
+  .login-sub{font-size:13.5px;color:var(--muted-dk);margin-bottom:28px;}
+
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--muted-dk);margin-bottom:7px;}
+  .field input{
+    width:100%;padding:13px 14px;border-radius:6px;border:1.5px solid rgba(21,20,15,0.18);
+    font-family:'Work Sans',sans-serif;font-size:14.5px;background:#fff;color:var(--ink);
+    transition:border-color .2s;
+  }
+  .field input:focus{border-color:var(--red);outline:none;}
+  .field input::placeholder{color:var(--muted-dk);}
+
+  .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;}
+  .row label{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted-dk);font-weight:600;}
+  .row input[type="checkbox"]{width:auto;}
+  .row a{font-size:12.5px;font-weight:600;color:var(--red-dk);}
+  .row a:hover{text-decoration:underline;}
+
+  .submit-btn{
+    width:100%;padding:14px;background:var(--ink);color:var(--text-lt);border-radius:6px;
+    font-weight:700;font-size:13px;letter-spacing:0.5px;text-transform:uppercase;transition:opacity .2s;
+  }
+  .submit-btn:hover{opacity:.85;}
+
+  .login-msg{
+    font-family:'Space Mono',monospace;font-size:12px;margin-top:14px;display:none;color:var(--green);
+    text-align:center;
+  }
+
+  .divider{display:flex;align-items:center;gap:12px;margin:26px 0;color:var(--muted-dk);font-size:11px;letter-spacing:1px;text-transform:uppercase;}
+  .divider::before,.divider::after{content:"";flex:1;height:1px;background:rgba(21,20,15,0.15);}
+
+  .alt-login{display:flex;gap:10px;margin-bottom:22px;}
+  .alt-btn{
+    flex:1;padding:12px;border:1.5px solid rgba(21,20,15,0.18);border-radius:6px;
+    font-size:13px;font-weight:600;transition:border-color .2s,background .2s;
+  }
+  .alt-btn:hover{border-color:var(--ink);background:rgba(21,20,15,0.04);}
+
+  .switch{text-align:center;font-size:13px;color:var(--muted-dk);}
+  .switch a{color:var(--red-dk);font-weight:700;}
+
+  :focus-visible{outline:2px solid var(--red);outline-offset:2px;}
+
+  /* ── Clerk component overrides ── */
+  #clerk-sign-in{width:100%;}
+  .cl-rootBox{width:100%!important;}
+  .cl-card{background:transparent!important;box-shadow:none!important;padding:0!important;border:none!important;}
+  .cl-headerTitle,.cl-headerSubtitle,.cl-header{display:none!important;}
+  .cl-socialButtonsBlockButton{border:1.5px solid rgba(21,20,15,.18)!important;border-radius:6px!important;font-family:'Work Sans',sans-serif!important;font-size:13px!important;font-weight:600!important;color:var(--ink)!important;background:transparent!important;transition:border-color .2s,background .2s!important;}
+  .cl-socialButtonsBlockButton:hover{border-color:var(--ink)!important;background:rgba(21,20,15,.04)!important;}
+  .cl-dividerLine{background:rgba(21,20,15,.15)!important;}
+  .cl-dividerText{font-size:11px!important;letter-spacing:1px!important;text-transform:uppercase!important;color:var(--muted-dk)!important;}
+  .cl-formFieldLabel{font-size:12px!important;font-weight:700!important;letter-spacing:.5px!important;text-transform:uppercase!important;color:var(--muted-dk)!important;margin-bottom:7px!important;}
+  .cl-formFieldInput{padding:13px 14px!important;border-radius:6px!important;border:1.5px solid rgba(21,20,15,.18)!important;font-family:'Work Sans',sans-serif!important;font-size:14.5px!important;background:#fff!important;color:var(--ink)!important;}
+  .cl-formFieldInput:focus{border-color:var(--red)!important;}
+  .cl-formButtonPrimary{width:100%!important;padding:14px!important;background:var(--ink)!important;color:var(--text-lt)!important;border-radius:6px!important;font-family:'Work Sans',sans-serif!important;font-weight:700!important;font-size:13px!important;letter-spacing:.5px!important;text-transform:uppercase!important;}
+  .cl-footerActionLink{color:var(--red-dk)!important;font-weight:700!important;}
+  .cl-footer{text-align:center!important;font-family:'Work Sans',sans-serif!important;font-size:13px!important;color:var(--muted-dk)!important;margin-top:18px!important;}
+  .cl-formFieldInputShowPasswordButton{color:var(--muted-dk)!important;}
+  .cl-alertText{font-family:'Work Sans',sans-serif!important;font-size:13px!important;}
+  .cl-internal-b3fm6y{display:none!important;}
+</style>
+</head>
+<body>
+
+<a href="index-4.html" class="back-link">&larr; Back to home</a>
+<div class="login-logo">THRIFT<span>BID</span></div>
+
+<div class="login-card">
+  <div class="login-eyebrow mono">Welcome Back</div>
+  <h1 class="display login-title">Log In</h1>
+  <p class="login-sub">Sign in to track bids, watch lots, and get outbid alerts.</p>
+
+  <div id="clerk-sign-in"></div>
+</div>
+
+<script
+  async
+  crossorigin="anonymous"
+  data-clerk-publishable-key="pk_test_c3VwcmVtZS10YXBpci04NC5jbGVyay5hY2NvdW50cy5kZXYk"
+  src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+  type="text/javascript"
+></script>
+<script>
+  window.addEventListener('load', async function() {
+    if (window.location.protocol === 'file:') {
+      document.getElementById('clerk-sign-in').innerHTML = '<p class="login-msg" style="display:block;color:var(--red-dk);">Open this site through a local web server to sign in. Run <strong>./serve.command</strong> from this folder, then use the browser page it opens.</p>';
+      return;
+    }
+    if (!window.Clerk) return;
+    await Clerk.load();
+    if (Clerk.user) { tbSaveUser(Clerk.user); return; }
+    Clerk.mountSignIn(document.getElementById('clerk-sign-in'), {
+      forceRedirectUrl: new URL('dashboard-1.html', window.location.href).href,
+      signUpUrl: new URL('signup.html', window.location.href).href,
+      appearance: {
+        layout: { socialButtonsPlacement: 'top', socialButtonsVariant: 'blockButton' },
+        variables: {
+          colorPrimary: '#E8402C',
+          colorBackground: '#F2EFE4',
+          colorInputBackground: '#ffffff',
+          colorInputText: '#15140F',
+          colorText: '#15140F',
+          colorTextSecondary: '#6b6a60',
+          borderRadius: '6px',
+          fontFamily: '"Work Sans", sans-serif'
+        }
+      }
+    });
+    Clerk.addListener(({ user }) => { if (user) tbSaveUser(user); });
+  });
+  function tbSaveUser(user) {
+    const email = user.emailAddresses?.[0]?.emailAddress || '';
+    const name = user.firstName ? (user.firstName + ' ' + (user.lastName || '')).trim() : email;
+    const initials = ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase() || (email[0] || 'T').toUpperCase();
+    localStorage.setItem('thriftbid_user', JSON.stringify({ name, email, initials }));
+    window.location.href = 'dashboard-1.html';
+  }
+</script>
+
+</body>
+</html>
